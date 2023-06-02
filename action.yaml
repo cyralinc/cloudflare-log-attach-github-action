@@ -1,0 +1,38 @@
+name: Cloudflare Log Attachment
+description: This will attach the pages deploy log to the PR decoration
+
+inputs:
+  email:
+    description: email address for api key
+    required: true
+  api-key:
+    description: the api key to get access to logs
+    required: true
+  accountid:
+    description: cloudflare account id to retrieve logs from
+    required: true
+  app-name:
+    description: the application name, which is typically the repo name, and is what this will use if not provided.
+    required: false
+    default: ${{ github.event.repository.name }}
+
+runs:
+  using: composite
+  steps:
+    #- name: show context
+    #  shell: bash
+    #  run: |
+    #   echo '${{ toJSON(github) }}'
+
+    - name: collect  logs
+      shell: bash
+      run: ${{ github.action_path }}/logattach.sh
+      env:
+        EMAIL: ${{ inputs.email }}
+
+        API_KEY: ${{ inputs.api-key }}
+        ACCOUNTID: ${{inputs.accountid}}
+        APP_NAME: ${{inputs.app-name}}
+        PR_URL: ${{ github.event.check_run.check_suite.pull_requests[0].url }}
+        DETAILS_URL: ${{ github.event.check_run.details_url }}
+        CHECK_URL: ${{ github.event.check_run.url }}
