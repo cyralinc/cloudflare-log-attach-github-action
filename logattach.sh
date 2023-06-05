@@ -13,7 +13,7 @@ logData=$(curl --request GET \
   --url $url \
   --header 'Content-Type: application/json' \
   --header "X-Auth-Email: ${EMAIL}" \
-  --header "X-Auth-Key: ${API_KEY}" | jq -r '.result.data | map("\(.ts) | \(.line)")[]')
+  --header "X-Auth-Key: ${API_KEY}" | jq -r '.result.data | map("\(.ts) | \(.line)")[]' | awk -F ' [|] ' '{printf "%-27s | %s\n", $1, $2}')
 
 echo "Log data"
 echo "------------"
