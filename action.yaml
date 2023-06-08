@@ -11,28 +11,21 @@ inputs:
   accountid:
     description: cloudflare account id to retrieve logs from
     required: true
-  app-name:
-    description: the application name, which is typically the repo name, and is what this will use if not provided.
+  github-token:
+    description: token with enough access to update issue comments
     required: false
-    default: ${{ github.event.repository.name }}
+    default: ${{ github.token }}
+
 
 runs:
   using: composite
   steps:
-    #- name: show context
-    #  shell: bash
-    #  run: |
-    #   echo '${{ toJSON(github) }}'
-
-    - name: collect  logs
+    - name: Cloudflare Log Processing
       shell: bash
       run: ${{ github.action_path }}/logattach.sh
       env:
         EMAIL: ${{ inputs.email }}
-
         API_KEY: ${{ inputs.api-key }}
-        ACCOUNTID: ${{inputs.accountid}}
-        APP_NAME: ${{inputs.app-name}}
-        PR_URL: ${{ github.event.check_run.check_suite.pull_requests[0].url }}
-        DETAILS_URL: ${{ github.event.check_run.details_url }}
+        ACCOUNTID: ${{ inputs.accountid }}
         CHECK_URL: ${{ github.event.check_run.url }}
+        GH_TOKEN: ${{ inputs.github-token }}
